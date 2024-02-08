@@ -62,8 +62,8 @@ def gradient_descent(theta0, theta1, x_km, y_price):
 
     return theta0 and theta1 for a linear regression
     """
-    iteration = 1000
-    a = 0.1
+    iteration = 10000
+    a = 0.0001
 
     for i in range(iteration):
         new_t0, new_t1 = update_theta(theta0, theta1, x_km, y_price, a)
@@ -101,13 +101,16 @@ def main():
     
     x_km_norm = normalisation(x_km)
     y_price_norm = normalisation(y_price)
-    theta0, theta1 = gradient_descent(0, 0, x_km_norm, y_price_norm)
+    theta0, theta1 = gradient_descent(0, 0, x_km, y_price)
     print(f"theta0: {theta0}, theta1: {theta1}")
 
-    x_values_norm = np.linspace(np.min(x_km_norm), np.max(x_km_norm), 100)
-    y_values_norm = linear_regression(theta0, theta1, x_values_norm)
+    # x_values_norm = np.linspace(np.min(x_km_norm), np.max(x_km_norm), 100)
+    # y_values_norm = linear_regression(theta0, theta1, x_values_norm)
+    # x_values = np.linspace(np.min(x_km), np.max(x_km), 100)
+    # y_values = denormalisation(y_values_norm, np.min(y_price), np.max(y_price))
+    
     x_values = np.linspace(np.min(x_km), np.max(x_km), 100)
-    y_values = denormalisation(y_values_norm, np.min(y_price), np.max(y_price))
+    y_values = linear_regression(theta0, theta1, x_values)
     create_graph(x_km, y_price, x_values, y_values)
 
 if __name__ ==  "__main__":

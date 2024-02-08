@@ -1,16 +1,16 @@
-def estimate_price():
-    """
-    This program use the following hypothesis to predict the price:
+#!/bin/python3
+from ft_linear_regression import linear_regression
 
-    estimatePrice(mileage) = theta0 + (theta1 * mileage)
-    """
-    theta_1 = 0
-    theta_0 = 0
-
+def estimate_price(theta0: float, theta1: float):
     mileage = float(input("What mileage ? "))
-    estimate_price = theta_0 + (theta_1 * mileage)
+    estimate_price = linear_regression(theta0, theta1, mileage)
+    print(f"Estimate price: {estimate_price}")
 
-    print(estimate_price)
 
 if __name__ ==  "__main__":
-    estimate_price()
+    theta0 = 0.1418915786374027
+    theta1 = 0.9779439287643005
+    try:
+        estimate_price(theta0, theta1)
+    except Exception as e:
+        print("./estimate_price.py:", e)
