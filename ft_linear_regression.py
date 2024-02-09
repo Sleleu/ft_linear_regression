@@ -84,25 +84,33 @@ def plot_result(x_km, y_price, x_values, y_values):
     plt.legend()
     plt.show()
 
+# def main():
+#     df = load("data.csv")
+#     x_km: np.ndarray = df["km"].to_numpy()
+#     y_price: np.ndarray = df["price"].to_numpy()
+    
+#     x_km_norm = normalisation(x_km)
+#     y_price_norm = normalisation(y_price)
+
+#     theta0_norm, theta1_norm = gradient_descent(0, 0, x_km_norm, y_price_norm)
+
+#     theta1 = theta1_norm * (np.max(y_price) - np.min(y_price)) / (np.max(x_km) - np.min(x_km))
+#     theta0 = np.mean(y_price) - theta1 * np.mean(x_km)
+    
+#     print(f"theta0 norm: {theta0_norm}, theta1 norm: {theta1_norm}")
+#     print(f"theta0: {theta0}, theta1: {theta1}")
+#     x_values = np.linspace(np.min(x_km), np.max(x_km), 100)
+#     y_values = predict(theta0, theta1, x_values)
+    
+#     plot_result(x_km, y_price, x_values, y_values)
+
+from LinearRegression import LinearRegression
+
 def main():
-    df = load("data.csv")
-    x_km: np.ndarray = df["km"].to_numpy()
-    y_price: np.ndarray = df["price"].to_numpy()
-    
-    x_km_norm = normalisation(x_km)
-    y_price_norm = normalisation(y_price)
-
-    theta0_norm, theta1_norm = gradient_descent(0, 0, x_km_norm, y_price_norm)
-
-    theta1 = theta1_norm * (np.max(y_price) - np.min(y_price)) / (np.max(x_km) - np.min(x_km))
-    theta0 = np.mean(y_price) - theta1 * np.mean(x_km)
-    
-    print(f"theta0 norm: {theta0_norm}, theta1 norm: {theta1_norm}")
-    print(f"theta0: {theta0}, theta1: {theta1}")
-    x_values = np.linspace(np.min(x_km), np.max(x_km), 100)
-    y_values = predict(theta0, theta1, x_values)
-    
-    plot_result(x_km, y_price, x_values, y_values)
+    df = load("data2.csv")
+    linear_regression = LinearRegression(df["km"].to_numpy(), df["price"].to_numpy(), iteration=1000, learning_rate=0.1)
+    print(f"Normalized results:\nt0 :{linear_regression.theta0} t1:{linear_regression.theta1}")
+    linear_regression.plot_result("Price by km", "Km", "Price")
 
 if __name__ ==  "__main__":
     main()
