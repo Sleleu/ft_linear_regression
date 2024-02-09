@@ -107,10 +107,15 @@ def plot_result(x_km, y_price, x_values, y_values):
 from LinearRegression import LinearRegression
 
 def main():
-    df = load("data2.csv")
-    linear_regression = LinearRegression(df["km"].to_numpy(), df["price"].to_numpy(), iteration=1000, learning_rate=0.1)
-    print(f"Normalized results:\nt0 :{linear_regression.theta0} t1:{linear_regression.theta1}")
-    linear_regression.plot_result("Price by km", "Km", "Price")
+    try:
+        df = load("data2.csv")
+        x_km = df["km"].to_numpy()
+        y_price = df["price"].to_numpy()
+        model = LinearRegression(x_km, y_price, iteration=1000, learning_rate=0.1)
+        model.display_stat()
+        model.plot_result("Price by km", "Km", "Price")
+    except (KeyError, Exception) as e:
+        print(f"./training.py: {e}")
 
 if __name__ ==  "__main__":
     main()
