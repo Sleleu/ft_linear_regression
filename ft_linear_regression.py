@@ -13,13 +13,13 @@ import matplotlib.pyplot as plt
 #     sum_errors = 0
     
 #     for i in range(0, m):
-#         y_prediction = linear_regression(theta0, theta1, x_km[i])
+#         y_prediction = predict(theta0, theta1, x_km[i])
 #         sum_errors += (y_prediction - y_price[i])**2
 #     mse = (1 / (2 * m)) * sum_errors
 #     return (mse)
 
 
-def linear_regression(theta0, theta1, mileage)-> float:
+def predict(theta0, theta1, mileage)-> float:
     """
     f(w, b, x) = w * x + b
     w and b = theta1 and theta0
@@ -35,15 +35,14 @@ def derivative(t0, t1, x_km, y_price):
     tmp_t0 = 0
     tmp_t1 = 0
     for i in range(0, m):
-        tmp_t0 += linear_regression(t0, t1, x_km[i]) - y_price[i]
-        tmp_t1 += (linear_regression(t0, t1, x_km[i]) - y_price[i]) * x_km[i] 
+        tmp_t0 += predict(t0, t1, x_km[i]) - y_price[i]
+        tmp_t1 += (predict(t0, t1, x_km[i]) - y_price[i]) * x_km[i] 
     derivative_t0 = (1 / m) * tmp_t0
     derivative_t1 = (1 / m) * tmp_t1
-    print(f"derivative_t0 {derivative_t0} | derivative_t1 {derivative_t1}")
     return derivative_t0, derivative_t1
 
 
-def update_theta(t0, t1, x_km, y_price, a):
+def update_parameters(t0, t1, x_km, y_price, a):
     """
     Replace old theta by the new theta following this formula:
     w = w - a * (dJ / dw)
@@ -62,11 +61,11 @@ def gradient_descent(theta0, theta1, x_km, y_price):
 
     return theta0 and theta1 for a linear regression
     """
-    iteration = 10000
-    a = 0.0001
+    iteration = 1000
+    a = 0.1
 
     for i in range(iteration):
-        new_t0, new_t1 = update_theta(theta0, theta1, x_km, y_price, a)
+        new_t0, new_t1 = update_parameters(theta0, theta1, x_km, y_price, a)
         theta0 = new_t0
         theta1 = new_t1
     return theta0, theta1
@@ -85,9 +84,11 @@ def denormalisation(norm_array: np.ndarray, min, max)-> np.ndarray:
     """
     return norm_array * (max - min) + min
 
+
 def create_graph(x_km, y_price, x_values, y_values):
     plt.scatter(x_km, y_price, color='blue', label="Training set data")
     plt.plot(x_values, y_values, color='red', label="Regression line")
+    plt.grid()
     plt.xlabel("km")
     plt.ylabel("Price")
     plt.title("Price by km")
@@ -101,16 +102,17 @@ def main():
     
     x_km_norm = normalisation(x_km)
     y_price_norm = normalisation(y_price)
-    theta0, theta1 = gradient_descent(0, 0, x_km, y_price)
-    print(f"theta0: {theta0}, theta1: {theta1}")
 
-    # x_values_norm = np.linspace(np.min(x_km_norm), np.max(x_km_norm), 100)
-    # y_values_norm = linear_regression(theta0, theta1, x_values_norm)
-    # x_values = np.linspace(np.min(x_km), np.max(x_km), 100)
-    # y_values = denormalisation(y_values_norm, np.min(y_price), np.max(y_price))
+    theta0_norm, theta1_norm = gradient_descent(0, 0, x_km_norm, y_price_norm)
+
+    theta1 = theta1_norm * (np.max(y_price) - np.min(y_price)) / (np.max(x_km) - np.min(x_km))
+    theta0 = np.mean(y_price) - theta1 * np.mean(x_km)
     
+    print(f"theta0 norm: {theta0_norm}, theta1 norm: {theta1_norm}")
+    print(f"theta0: {theta0}, theta1: {theta1}")
     x_values = np.linspace(np.min(x_km), np.max(x_km), 100)
-    y_values = linear_regression(theta0, theta1, x_values)
+    y_values = predict(theta0, theta1, x_values)
+    
     create_graph(x_km, y_price, x_values, y_values)
 
 if __name__ ==  "__main__":
