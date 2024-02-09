@@ -4,21 +4,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Useless function, but good for understanding
-# def cost_function(theta1, theta0, x_km, y_price):
-#     """
-#     J(w, b) = 1 / 2m * sum( f(w,b (x[i]) - y[i] )^2)
-#     Return the mean squared error
-#     """
-#     m = len(x_km)
-#     sum_errors = 0
-    
-#     for i in range(0, m):
-#         y_prediction = predict(theta0, theta1, x_km[i])
-#         sum_errors += (y_prediction - y_price[i])**2
-#     mse = (1 / (2 * m)) * sum_errors
-#     return (mse)
-
 def load(path: str) -> pd.DataFrame:
     """
     Load a CSV file from the specified path into a Pandas DataFrame.
@@ -40,9 +25,9 @@ def load(path: str) -> pd.DataFrame:
         return exit(1)
 
 def plot_result(model: LinearRegression, title: str, x_label: str, y_label: str)-> None:
-    x_values = [model.features_min, model.features_max]
-    prediction_target_min = model.predict(model.theta0, model.theta1, model.features_min)
-    prediction_target_max = model.predict(model.theta0, model.theta1, model.features_max)
+    x_values = [min(model.features), max(model.features)]
+    prediction_target_min = model.predict(model.theta0, model.theta1, min(model.features))
+    prediction_target_max = model.predict(model.theta0, model.theta1, max(model.features))
     y_values = [prediction_target_min, prediction_target_max]
     plt.scatter(model.features, model.target, color='blue', label="Training set data")
     plt.plot(x_values, y_values, color='red', label="Regression line")
@@ -61,7 +46,7 @@ def main():
         model = LinearRegression(x_km, y_price, iteration=1000, learning_rate=0.1)
         model.display_stat()
         plot_result(model, "Price by km", "Km", "Price")
-    except (KeyError, Exception) as e:
+    except Exception as e:
         print(f"./training.py: {e}")
 
 if __name__ ==  "__main__":

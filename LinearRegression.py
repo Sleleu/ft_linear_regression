@@ -17,10 +17,6 @@ class LinearRegression:
         self.learning_rate = learning_rate
         self.features = features
         self.target = target
-        self.features_min = np.min(features)
-        self.features_max = np.max(features)
-        self.target_min = np.min(target)
-        self.target_max = np.max(target)
         self.features_norm = self.normalize(features)
         self.target_norm = self.normalize(target)
         self.gradient_descent()
@@ -37,11 +33,8 @@ class LinearRegression:
         print(f"{CYAN}Theta 1 normalized: {GREEN}{self.theta1_norm}")
         print(f"\n{YELLOW}|-------------------------------------------|{END}\n")
         print(f"{CYAN}Target: {GREEN}{self.target}")
-        print(f"{CYAN}Features: {GREEN}{self.features}")
-        print(f"\n{YELLOW}|-------------------------------------------|{END}\n")
-        print(f"{CYAN}Target min:   {GREEN}{self.target_min} | {CYAN}Target max:   {GREEN}{self.target_max}")
-        print(f"{CYAN}Features min: {GREEN}{self.features_min} | {CYAN}Features max: {GREEN}{self.features_max}")
-        print(f"{END}")
+        print(f"{CYAN}Features: {GREEN}{self.features}{END}")
+
 
     @staticmethod
     def predict(theta0, theta1, features):
