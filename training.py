@@ -5,15 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def load(path: str) -> pd.DataFrame:
-    """
-    Load a CSV file from the specified path into a Pandas DataFrame.
-
-    Parameters:
-    - path (str): The path to the CSV file to be loaded.
-
-    Returns:
-    - The loaded DataFrame if successful, None if an error occurs.
-    """
     HANDLED_ERRORS = (FileNotFoundError, PermissionError,
                       ValueError, IsADirectoryError)
     try:
@@ -25,18 +16,26 @@ def load(path: str) -> pd.DataFrame:
         return exit(1)
 
 def plot_result(model: LinearRegression, title: str, x_label: str, y_label: str)-> None:
+    fig, (ax1, ax2) = plt.subplots(1,2, figsize=(12,5))
+    fig.suptitle("Linear Regression model")
     x_values = [min(model.features), max(model.features)]
     prediction_target_min = model.predict(model.theta0, model.theta1, min(model.features))
     prediction_target_max = model.predict(model.theta0, model.theta1, max(model.features))
     y_values = [prediction_target_min, prediction_target_max]
-    plt.scatter(model.features, model.target, color='blue', label="Training set data")
-    plt.plot(x_values, y_values, color='red', label="Regression line")
-    plt.grid()
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
-    plt.title(title)
-    plt.legend()
-    plt.show()
+    ax1.scatter(model.features, model.target, color='blue', label="Training set data")
+    ax1.plot(x_values, y_values, color='red', label="Regression line")
+    ax1.grid()
+    ax1.set_xlabel(x_label)
+    ax1.set_ylabel(y_label)
+    ax1.set_title(title)
+    ax1.legend()
+    
+    ax2.plot(range(model.iteration), model.cost_history, color='blue')
+    ax2.set_xlabel("Iterations")
+    ax2.set_ylabel("Cost")
+    ax2.set_title("Cost by iteration")
+    ax2.grid()
+    plt.show()  
 
 def main():
     try:
