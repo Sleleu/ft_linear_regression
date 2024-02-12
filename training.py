@@ -15,12 +15,12 @@ def load(path: str) -> pd.DataFrame:
         print(f"{__name__}: {type(error).__name__}: {error}")
         return exit(1)
 
-def plot_result(model: LinearRegression, title: str, x_label: str, y_label: str)-> None:
+def plot_result(model: LinearRegression, headers: list, title: str, x_label: str, y_label: str)-> None:
     fig, (ax1, ax2) = plt.subplots(1,2, figsize=(12,5))
     fig.suptitle("Linear Regression model")
 
     # delete column of ones
-    X_train_init = model.X_train[:, :-1]
+    X_train_init = model.X_train[:, 1:]
 
     predictions = model.predict(model.theta, model.X_train)
     ax1.scatter(X_train_init, model.Y_train, color='blue', label="Training set data")
@@ -43,16 +43,17 @@ def main():
         df = load("data.csv")
 
         # Load X(m x n+1) and Y(m x 1)
-        X_train = df["km"].to_numpy()
-        Y_train = df["price"].to_numpy()
+        X_train = df.iloc[:, :-1].values
+        Y_train = df.iloc[:, -1].values
+        headers = list(df.columns)
         Y_train = Y_train.reshape((Y_train.shape[0], 1))
-        X_train = np.c_[X_train, np.ones(X_train.shape[0])]
-        print(X_train.shape)
-        print(Y_train.shape)
+        X_train = np.c_[np.ones(X_train.shape[0]), X_train]
+        print(X_train)
+        print(Y_train)
 
         model = LinearRegression(X_train, Y_train, iteration=1000, learning_rate=0.1)
         # model.display_stat()
-        plot_result(model, "Price by km", "Km", "Price")
+        plot_result(model, headers, "Price by km", "Km", "Price")
     except KeyboardInterrupt:
         exit(0)
     except Exception as e:
