@@ -20,10 +20,10 @@ def plot_result(model: LinearRegression, title: str, x_label: str, y_label: str)
     fig.suptitle("Linear Regression model")
 
     # delete column of ones
-    X_train_init = model.X_train_norm[:, :-1]
+    X_train_init = model.X_train[:, :-1]
 
-    predictions = model.predict(model.theta_norm, model.X_train_norm)
-    ax1.scatter(X_train_init, model.Y_train_norm, color='blue', label="Training set data")
+    predictions = model.predict(model.theta, model.X_train)
+    ax1.scatter(X_train_init, model.Y_train, color='blue', label="Training set data")
     ax1.plot(X_train_init, predictions, color='red', label="Regression line")
     ax1.grid()
     ax1.set_xlabel(x_label)
@@ -50,8 +50,8 @@ def main():
         print(X_train.shape)
         print(Y_train.shape)
 
-        model = LinearRegression(X_train, Y_train, iteration=10000, learning_rate=0.1)
-        model.display_stat()
+        model = LinearRegression(X_train, Y_train, iteration=1000, learning_rate=0.1)
+        # model.display_stat()
         plot_result(model, "Price by km", "Km", "Price")
     except KeyboardInterrupt:
         exit(0)

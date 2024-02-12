@@ -30,13 +30,9 @@ class LinearRegression:
         self.Y_train = Y_train
         self.X_train_norm = np.hstack((self.normalize(X_train[:, :-1]), self.X_train[:, -1:]))
         self.Y_train_norm = self.normalize(Y_train)
-        print("self.X_train_norm\n", self.X_train_norm)
-        print("self.X_train\n",self.X_train)
-        print("self.Y_train_norm\n", self.Y_train_norm)
-        print("self.Y_train\n", self.Y_train)
 
         self.gradient_descent()
-        # self.denormalize_theta(self.X_train, self.Y_train)
+        self.denormalize_theta(self.X_train, self.Y_train)
 
     def display_stat(self):
         print(f"\n{CYAN}Iterations:         {GREEN}{self.iteration}")
@@ -91,5 +87,5 @@ class LinearRegression:
         return (array - np.min(array)) / (np.max(array) - np.min(array))
 
     def denormalize_theta(self, X_train, Y_train):
-        self.theta[:-1] = self.theta_norm[:-1] * (np.max(Y_train) - np.min(Y_train)) / (np.max(X_train) - np.min(X_train))
-        self.theta[-1] = np.mean(Y_train) - self.theta[:-1] * np.mean(X_train)
+        self.theta[:-1] = self.theta_norm[:-1] * (np.max(Y_train) - np.min(Y_train)) / (np.max(X_train[:,: -1]) - np.min(X_train[:,:-1]))
+        self.theta[-1] = np.mean(Y_train) - self.theta[:-1] * np.mean(X_train[:, : -1])
