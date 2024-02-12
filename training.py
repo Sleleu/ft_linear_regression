@@ -19,26 +19,23 @@ def plot_result(model: LinearRegression, title: str, x_label: str, y_label: str)
     fig, (ax1, ax2) = plt.subplots(1,2, figsize=(12,5))
     fig.suptitle("Linear Regression model")
 
+    # delete column of ones
     X_train_init = model.X_train[:, :-1]
-    print(X_train_init)
 
     predictions = model.predict(model.theta, model.X_train)
-
-    print("test1")
     ax1.scatter(X_train_init, model.Y_train, color='blue', label="Training set data")
-    print("test2")
     ax1.plot(X_train_init, predictions, color='red', label="Regression line")
-    # ax1.grid()
-    # ax1.set_xlabel(x_label)
-    # ax1.set_ylabel(y_label)
-    # ax1.set_title(title)
-    # ax1.legend()
+    ax1.grid()
+    ax1.set_xlabel(x_label)
+    ax1.set_ylabel(y_label)
+    ax1.set_title(title)
+    ax1.legend()
     
-    # ax2.plot(range(model.iteration), model.cost_history, color='blue')
-    # ax2.set_xlabel("Iterations")
-    # ax2.set_ylabel("Cost")
-    # ax2.set_title("Learning curve")
-    # ax2.grid()
+    ax2.plot(range(model.iteration), model.cost_history, color='blue')
+    ax2.set_xlabel("Iterations")
+    ax2.set_ylabel("Cost")
+    ax2.set_title("Learning curve")
+    ax2.grid()
     plt.show()  
 
 def main():

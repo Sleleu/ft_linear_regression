@@ -64,8 +64,8 @@ class LinearRegression:
         following the matrix formula:  J(THETA) = 1 / 2m * sum(X . THETA - Y)2
         """
         Y_prediction = self.predict(theta, X_train)
-        sum_errors = (Y_prediction - Y_train)**2
-        cost = (1 / (2 * self.m)) * sum_errors
+        errors = (Y_prediction - Y_train)**2
+        cost = (1 / (2 * self.m)) * np.sum(errors)
         return (cost)
 
     def gradient(self, X_train: np.ndarray, Y_train: np.ndarray):
@@ -80,18 +80,17 @@ class LinearRegression:
         for i in range(self.iteration):
             gradient = self.gradient(self.X_train, self.Y_train)
             self.theta -= self.learning_rate * gradient
-            print("yo")
             cost = self.cost_function(self.theta, self.X_train, self.Y_train)
             self.cost_history.append(cost)
-            print("yo2")
-            # if i != 0 and i % (self.iteration / 10) == 0:
-            #     print(f"{CYAN}Iteration:  {YELLOW}{i}{CYAN}| mse: {YELLOW}{cost:.4f} ",
-            #           f"{CYAN}| theta0: {YELLOW}{self.theta[0]:.4f} {CYAN}| theta1: {YELLOW}{self.theta[1]:.4f} {CYAN}|",
-            #           f"dt0: {YELLOW}{gradient[0]:.4f} {CYAN}| dt1: {YELLOW}{gradient[1]:.4f}{END}")
+            if i != 0 and i % (self.iteration / 10) == 0:
+                print(f"{CYAN}Iteration:  {YELLOW}{i}{CYAN}| cost: {YELLOW}{cost:.4f} ",
+                      f"gradient0: {YELLOW}{gradient[0]} {CYAN}{END}")
 
     def normalize(self, array: np.ndarray)-> np.ndarray:
         return (array - np.min(array)) / (np.max(array) - np.min(array))
 
-    def denormalize_theta(self, features, target):
-        self.theta1 = self.theta1_norm * (np.max(target) - np.min(target)) / (np.max(features) - np.min(features))
-        self.theta0 = np.mean(target) - self.theta1 * np.mean(features)
+    def denormalize_theta(self, X_train, Y_train):
+        self.theta[:-1] = self.theta_norm[:-1] * (np.max(Y_train) - np.min(Y_train)) / (np.max(X_train) - np.min(X_train))
+        self.theta[-1] = np.mean(Y_train) - self.theta[:-1] * np.mean(X_train)
+        print("THETA", self.theta)
+        print("THETA NORM", self.theta_norm)
