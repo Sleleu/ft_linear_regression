@@ -16,14 +16,13 @@ class LinearRegression:
         self.n = X_train.shape[1] - 1 # nb of variables to handle (X1, X2, ...)
         self.theta = np.zeros((self.n + 1, 1)) # matrix of parameters
         self.theta_norm = np.zeros((self.n + 1, 1)) # matrix of normalized parameters
-
         self.X_train = X_train
         self.Y_train = Y_train
         self.X_train_norm = np.hstack((self.X_train[:, 0:1], self.normalize(X_train[:, 1:])))
-        print("salut", self.X_train_norm)
         self.Y_train_norm = self.normalize(Y_train)
 
         self.gradient_descent()
+        print("yo1")
         self.denormalize_theta(self.X_train, self.Y_train)
 
     def display_stat(self):
@@ -66,19 +65,36 @@ class LinearRegression:
         return gradient
 
     def gradient_descent(self):
+        """
+        Gradient descent algorithm in matrix form, following the formula THETA = THETA - alpha * (dJ/dTHETA)
+        """
         for i in range(self.iteration):
             gradient = self.gradient(self.X_train_norm, self.Y_train_norm)
             self.theta_norm -= self.learning_rate * gradient
             cost = self.cost_function(self.theta_norm, self.X_train_norm, self.Y_train_norm)
             self.cost_history.append(cost)
             if i != 0 and i % (self.iteration / 10) == 0:
-                print(f"{CYAN}Iteration:  {YELLOW}{i}{CYAN}| cost: {YELLOW}{cost:.4f} ")
+                print(f"{CYAN}Iteration:  {YELLOW}{i}{CYAN}| cost: {YELLOW}{cost:.4f} {END}")
 
     def normalize(self, array: np.ndarray)-> np.ndarray:
         return (array - np.min(array)) / (np.max(array) - np.min(array))
 
     def denormalize_theta(self, X_train, Y_train):
+        print("theta norm\n", self.theta_norm)
         self.theta[1:] = self.theta_norm[1:] * (np.max(Y_train) - np.min(Y_train)) / (np.max(X_train[:, 1:]) - np.min(X_train[:, 1:]))
-        self.theta[0] = np.mean(Y_train) - self.theta[1:] * np.mean(X_train[:, 1:])
-        print(self.theta)
-        print("THETA TEST", self.theta[1:])
+        print("yo")
+        self.theta[0] = np.mean(Y_train) - np.sum(self.theta[1:] * np.mean(X_train[:, 1:]))
+        print("yo2")
+
+    # def denormalize_theta(self, X_train, Y_train):
+    #     # Calculer les écarts pour la normalisation (remplacer par votre méthode de normalisation)
+    #     X_mean = np.mean(X_train[:, 1:], axis=0)
+    #     X_std = np.std(X_train[:, 1:], axis=0)
+    #     Y_mean = np.mean(Y_train)
+    #     Y_std = np.std(Y_train)
+
+    #     # Ajuster les coefficients pour les features (theta[1:])
+    #     self.theta[1:] = self.theta_norm[1:] * Y_std / X_std
+
+    #     # Ajuster le terme de biais (theta[0])
+    #     self.theta[0] = Y_mean - np.dot(self.theta[1:].T, X_mean)
