@@ -18,33 +18,46 @@ def load(path: str) -> pd.DataFrame:
 def plot_result(model: LinearRegression, title: str, x_label: str, y_label: str)-> None:
     fig, (ax1, ax2) = plt.subplots(1,2, figsize=(12,5))
     fig.suptitle("Linear Regression model")
-    x_values = [min(model.features), max(model.features)]
-    prediction_target_min = model.predict(model.theta0, model.theta1, min(model.features))
-    prediction_target_max = model.predict(model.theta0, model.theta1, max(model.features))
-    y_values = [prediction_target_min, prediction_target_max]
-    ax1.scatter(model.features, model.target, color='blue', label="Training set data")
-    ax1.plot(x_values, y_values, color='red', label="Regression line")
-    ax1.grid()
-    ax1.set_xlabel(x_label)
-    ax1.set_ylabel(y_label)
-    ax1.set_title(title)
-    ax1.legend()
+
+    X_train_init = model.X_train[:, :-1]
+    print(X_train_init)
+
+    predictions = model.predict(model.theta, model.X_train)
+
+    print("test1")
+    ax1.scatter(X_train_init, model.Y_train, color='blue', label="Training set data")
+    print("test2")
+    ax1.plot(X_train_init, predictions, color='red', label="Regression line")
+    # ax1.grid()
+    # ax1.set_xlabel(x_label)
+    # ax1.set_ylabel(y_label)
+    # ax1.set_title(title)
+    # ax1.legend()
     
-    ax2.plot(range(model.iteration), model.cost_history, color='blue')
-    ax2.set_xlabel("Iterations")
-    ax2.set_ylabel("Cost")
-    ax2.set_title("Cost by iteration")
-    ax2.grid()
+    # ax2.plot(range(model.iteration), model.cost_history, color='blue')
+    # ax2.set_xlabel("Iterations")
+    # ax2.set_ylabel("Cost")
+    # ax2.set_title("Learning curve")
+    # ax2.grid()
     plt.show()  
 
 def main():
     try:
-        df = load("data.csv")
-        x_km = df["km"].to_numpy()
-        y_price = df["price"].to_numpy()
-        model = LinearRegression(x_km, y_price, iteration=1000, learning_rate=0.1)
+        df = load("test.csv")
+
+        # Load X(m x n+1) and Y(m x 1)
+        X_train = df["km"].to_numpy()
+        Y_train = df["price"].to_numpy()
+        Y_train = Y_train.reshape((Y_train.shape[0], 1))
+        X_train = np.c_[X_train, np.ones(X_train.shape[0])]
+        print(X_train.shape)
+        print(Y_train.shape)
+
+        model = LinearRegression(X_train, Y_train, iteration=1000, learning_rate=0.001)
         model.display_stat()
         plot_result(model, "Price by km", "Km", "Price")
+    except KeyboardInterrupt:
+        exit(0)
     except Exception as e:
         print(f"./training.py: {e}")
 
