@@ -30,9 +30,10 @@ class LinearRegression:
         self.Y_train = Y_train
         self.X_train_norm = np.hstack((self.normalize(X_train[:, :-1]), self.X_train[:, -1:]))
         self.Y_train_norm = self.normalize(Y_train)
-        print("X_TRAIN: \n", self.X_train)
-        # print("NORMALIZED X_train:\n", self.X_train_norm)
-        print("Y_TRAIN:\n", self.Y_train)
+        print("self.X_train_norm\n", self.X_train_norm)
+        print("self.X_train\n",self.X_train)
+        print("self.Y_train_norm\n", self.Y_train_norm)
+        print("self.Y_train\n", self.Y_train)
 
         self.gradient_descent()
         # self.denormalize_theta(self.X_train, self.Y_train)
@@ -72,15 +73,15 @@ class LinearRegression:
         """
         Return a matrix(n+1, 1) representing the gradient
         """
-        Y_prediction = self.predict(self.theta, X_train)
+        Y_prediction = self.predict(self.theta_norm, X_train)
         gradient = (1 / self.m) * np.dot(X_train.T, (Y_prediction - Y_train))
         return gradient
 
     def gradient_descent(self):
         for i in range(self.iteration):
-            gradient = self.gradient(self.X_train, self.Y_train)
-            self.theta -= self.learning_rate * gradient
-            cost = self.cost_function(self.theta, self.X_train, self.Y_train)
+            gradient = self.gradient(self.X_train_norm, self.Y_train_norm)
+            self.theta_norm -= self.learning_rate * gradient
+            cost = self.cost_function(self.theta_norm, self.X_train_norm, self.Y_train_norm)
             self.cost_history.append(cost)
             if i != 0 and i % (self.iteration / 10) == 0:
                 print(f"{CYAN}Iteration:  {YELLOW}{i}{CYAN}| cost: {YELLOW}{cost:.4f} ",
@@ -92,5 +93,3 @@ class LinearRegression:
     def denormalize_theta(self, X_train, Y_train):
         self.theta[:-1] = self.theta_norm[:-1] * (np.max(Y_train) - np.min(Y_train)) / (np.max(X_train) - np.min(X_train))
         self.theta[-1] = np.mean(Y_train) - self.theta[:-1] * np.mean(X_train)
-        print("THETA", self.theta)
-        print("THETA NORM", self.theta_norm)
