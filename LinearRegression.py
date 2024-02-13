@@ -22,7 +22,6 @@ class LinearRegression:
         self.Y_train_norm = self.normalize(Y_train)
 
         self.gradient_descent()
-        print("yo1")
         self.denormalize_theta(self.X_train, self.Y_train)
 
     def display_stat(self):
@@ -82,19 +81,4 @@ class LinearRegression:
     def denormalize_theta(self, X_train, Y_train):
         print("theta norm\n", self.theta_norm)
         self.theta[1:] = self.theta_norm[1:] * (np.max(Y_train) - np.min(Y_train)) / (np.max(X_train[:, 1:]) - np.min(X_train[:, 1:]))
-        print("yo")
         self.theta[0] = np.mean(Y_train) - np.sum(self.theta[1:] * np.mean(X_train[:, 1:]))
-        print("yo2")
-
-    # def denormalize_theta(self, X_train, Y_train):
-    #     # Calculer les écarts pour la normalisation (remplacer par votre méthode de normalisation)
-    #     X_mean = np.mean(X_train[:, 1:], axis=0)
-    #     X_std = np.std(X_train[:, 1:], axis=0)
-    #     Y_mean = np.mean(Y_train)
-    #     Y_std = np.std(Y_train)
-
-    #     # Ajuster les coefficients pour les features (theta[1:])
-    #     self.theta[1:] = self.theta_norm[1:] * Y_std / X_std
-
-    #     # Ajuster le terme de biais (theta[0])
-    #     self.theta[0] = Y_mean - np.dot(self.theta[1:].T, X_mean)

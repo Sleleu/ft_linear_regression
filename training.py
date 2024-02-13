@@ -28,7 +28,7 @@ def plot_result(model, headers):
     
     for i in range(n):
         axs[i].scatter(X_train_init[:, i], model.Y_train_norm, color='blue', label="Training set data")
-        if n == 1:
+        if i == 0:
             axs[i].plot(X_train_init[:, i], predictions, 'r', label="Predictions")
         else:
             axs[i].plot(X_train_init[:, i], predictions, 'r.', label="Predictions")
@@ -52,7 +52,7 @@ def plot_result(model, headers):
 
 def main():
     try:
-        df = load("houses.csv")
+        df = load("data/data.csv")
         # Load X(m x n+1) and Y(m x 1)
         X_train = df.iloc[:, :-1].values
         Y_train = df.iloc[:, -1].values
