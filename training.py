@@ -1,6 +1,5 @@
 #!/bin/python3
 from LinearRegression import LinearRegression
-import sys
 import math
 import pandas as pd
 import numpy as np
@@ -41,6 +40,7 @@ def plot_result(model, headers):
     
     l_curve = axs[n]
     l_curve.plot(range(len(model.cost_history)), model.cost_history, color='blue')
+    l_curve.ylimit = (0, max(model.cost_history))
     l_curve.set_xlabel("Iterations")
     l_curve.set_ylabel("Cost")
     l_curve.set_title("Learning curve")
@@ -54,14 +54,12 @@ def plot_result(model, headers):
 def main():
     try:
         df = load("data/data.csv")
-        # Load X(m x n+1) and Y(m x 1)
         X_train = df.iloc[:, :-1].values
         Y_train = df.iloc[:, -1].values
         headers = list(df.columns)
         Y_train = Y_train.reshape((Y_train.shape[0], 1))
         X_train = np.c_[np.ones(X_train.shape[0]), X_train]
-
-        model = LinearRegression(X_train, Y_train, iteration=10000, learning_rate=0.01)
+        model = LinearRegression(X_train, Y_train, iteration=1000, learning_rate=0.1)
         model.display_stat()
         plot_result(model, headers)
     except KeyboardInterrupt:

@@ -1,8 +1,6 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 YELLOW = "\033[1;33m"
-PURPLE = "\033[1;35m"
 CYAN = "\033[1;36m"
 GREEN = "\033[1;32m"
 END = "\033[0m"
@@ -14,23 +12,25 @@ class LinearRegression:
         self.cost_history = []
         self.m = X_train.shape[0]     # number of lines in the dataset
         self.n = X_train.shape[1] - 1 # nb of variables to handle (X1, X2, ...)
-        self.theta = np.zeros((self.n + 1, 1)) # matrix of parameters
         self.theta_norm = np.zeros((self.n + 1, 1)) # matrix of normalized parameters
         self.X_train = X_train
         self.Y_train = Y_train
         self.X_train_norm = np.hstack((self.X_train[:, 0:1], self.normalize(X_train[:, 1:])))
         self.Y_train_norm = self.normalize(Y_train)
-
         self.gradient_descent()
-        self.denormalize_theta(self.X_train, self.Y_train)
 
     def display_stat(self):
         print(f"\n{CYAN}Iterations:         {GREEN}{self.iteration}")
         print(f"{CYAN}Learning rate:      {GREEN}{self.learning_rate}")
         print(f"\n{YELLOW}|-------------------------------------------|{END}\n")
-        print(f"{CYAN}Theta normalized:   {GREEN}{self.theta_norm.flatten()}")      
-        print(f"{CYAN}Theta:              {GREEN}{self.theta.flatten()}")
-        print(f"\n{YELLOW}|-------------------------------------------|{END}\n")
+        print(f"{CYAN}theta = {GREEN}{self.theta_norm.flatten()}")      
+        for i in range(1, self.X_train.shape[1]):
+            min_x_feature = np.min(self.X_train[:, i])
+            max_x_feature = np.max(self.X_train[:, i])
+            print(f"{CYAN}min_x{i} = {GREEN}{min_x_feature}{END}")
+            print(f"{CYAN}max_x{i} = {GREEN}{max_x_feature}{END}")
+        print(f"{CYAN}min_y = {GREEN}{np.min(self.Y_train)}")
+        print(f"{CYAN}max_y = {GREEN}{np.max(self.Y_train)}")
 
 
     @staticmethod
@@ -75,7 +75,3 @@ class LinearRegression:
 
     def normalize(self, array: np.ndarray)-> np.ndarray:
         return (array - np.min(array)) / (np.max(array) - np.min(array))
-
-    def denormalize_theta(self, X_train, Y_train):
-        self.theta[1:] = self.theta_norm[1:] * (np.max(Y_train) - np.min(Y_train)) / (np.max(X_train[:, 1:]) - np.min(X_train[:, 1:]))
-        self.theta[0] = np.mean(Y_train) - np.sum(self.theta[1:] * np.mean(X_train[:, 1:]))
