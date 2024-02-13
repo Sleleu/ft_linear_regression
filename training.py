@@ -1,5 +1,6 @@
 #!/bin/python3
 from LinearRegression import LinearRegression
+import sys
 import math
 import pandas as pd
 import numpy as np
@@ -60,8 +61,8 @@ def main():
         Y_train = Y_train.reshape((Y_train.shape[0], 1))
         X_train = np.c_[np.ones(X_train.shape[0]), X_train]
 
-        model = LinearRegression(X_train, Y_train, iteration=1000, learning_rate=0.1)
-        # model.display_stat()
+        model = LinearRegression(X_train, Y_train, iteration=10000, learning_rate=0.01)
+        model.display_stat()
         plot_result(model, headers)
     except KeyboardInterrupt:
         exit(0)

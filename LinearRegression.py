@@ -28,13 +28,9 @@ class LinearRegression:
         print(f"\n{CYAN}Iterations:         {GREEN}{self.iteration}")
         print(f"{CYAN}Learning rate:      {GREEN}{self.learning_rate}")
         print(f"\n{YELLOW}|-------------------------------------------|{END}\n")
-        print(f"{CYAN}Theta:\n            {GREEN}{self.theta}")
+        print(f"{CYAN}Theta normalized:   {GREEN}{self.theta_norm.flatten()}")      
+        print(f"{CYAN}Theta:              {GREEN}{self.theta.flatten()}")
         print(f"\n{YELLOW}|-------------------------------------------|{END}\n")
-        print(f"{CYAN}Theta 0 normalized: {GREEN}{self.theta_norm[0]}")
-        print(f"{CYAN}Theta 1 normalized: {GREEN}{self.theta_norm[1]}")
-        print(f"\n{YELLOW}|-------------------------------------------|{END}\n")
-        print(f"{CYAN}Target: {GREEN}{self.Y_train}")
-        print(f"{CYAN}Features: {GREEN}{self.X_train}{END}")
 
 
     @staticmethod
@@ -73,12 +69,13 @@ class LinearRegression:
             cost = self.cost_function(self.theta_norm, self.X_train_norm, self.Y_train_norm)
             self.cost_history.append(cost)
             if i != 0 and i % (self.iteration / 10) == 0:
-                print(f"{CYAN}Iteration:  {YELLOW}{i}{CYAN}| cost: {YELLOW}{cost:.4f} {END}")
+                print(f"{CYAN}Iteration:  {YELLOW}{i}{CYAN} | cost: {YELLOW}{cost:.4f}",
+                      f"{CYAN}| theta: {YELLOW}{self.theta_norm.flatten()}",
+                      f"{CYAN}| gradient: {YELLOW}{gradient.flatten()}{END}")
 
     def normalize(self, array: np.ndarray)-> np.ndarray:
         return (array - np.min(array)) / (np.max(array) - np.min(array))
 
     def denormalize_theta(self, X_train, Y_train):
-        print("theta norm\n", self.theta_norm)
         self.theta[1:] = self.theta_norm[1:] * (np.max(Y_train) - np.min(Y_train)) / (np.max(X_train[:, 1:]) - np.min(X_train[:, 1:]))
         self.theta[0] = np.mean(Y_train) - np.sum(self.theta[1:] * np.mean(X_train[:, 1:]))
