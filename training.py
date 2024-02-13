@@ -17,9 +17,9 @@ def load(path: str) -> pd.DataFrame:
         return exit(1)
 
 def plot_result(model, headers):
-    X_train_init = model.X_train_norm[:, 1:]
+    X_train_init = model.X_train[:, 1:]
     n = X_train_init.shape[1]
-    predictions = model.predict(model.theta_norm, model.X_train_norm)
+    predictions = model.predict(model.theta, model.X_train)
     
     n_rows = math.ceil((n + 1) / 2)
     fig, axs = plt.subplots(n_rows, 2, figsize=(10, n_rows * 5))
@@ -27,7 +27,7 @@ def plot_result(model, headers):
     axs = axs.flatten()
     
     for i in range(n):
-        axs[i].scatter(X_train_init[:, i], model.Y_train_norm, color='blue', label="Training set data")
+        axs[i].scatter(X_train_init[:, i], model.Y_train, color='blue', label="Training set data")
         if i == 0:
             axs[i].plot(X_train_init[:, i], predictions, 'r', label="Predictions")
         else:
@@ -51,16 +51,28 @@ def plot_result(model, headers):
     plt.tight_layout()
     plt.show()
 
+def display_min_max(X_train: np.ndarray, Y_train: np.ndarray):
+    for i in range(X_train.shape[1]):
+        min_x_feature = np.min(X_train[:, i])
+        max_x_feature = np.max(X_train[:, i])
+        print(f"min_x{i+1} = {min_x_feature}")
+        print(f"max_x{i+1} = {max_x_feature}")
+    print(f"min_y = {np.min(Y_train)}")
+    print(f"max_y = {np.max(Y_train)}") 
+
 def main():
     try:
-        df = load("data/data.csv")
+        df = load("data/houses.csv")
         X_train = df.iloc[:, :-1].values
         Y_train = df.iloc[:, -1].values
         headers = list(df.columns)
         Y_train = Y_train.reshape((Y_train.shape[0], 1))
-        X_train = np.c_[np.ones(X_train.shape[0]), X_train]
-        model = LinearRegression(X_train, Y_train, iteration=1000, learning_rate=0.1)
+        X_train_norm = LinearRegression.normalize(X_train)
+        Y_train_norm = LinearRegression.normalize(Y_train)
+        X_train_norm = np.c_[np.ones(X_train_norm.shape[0]), X_train_norm]
+        model = LinearRegression(X_train_norm, Y_train_norm, iteration=10000, learning_rate=0.1)
         model.display_stat()
+        display_min_max(X_train, Y_train)
         plot_result(model, headers)
     except KeyboardInterrupt:
         exit(0)

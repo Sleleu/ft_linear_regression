@@ -12,25 +12,16 @@ class LinearRegression:
         self.cost_history = []
         self.m = X_train.shape[0]     # number of lines in the dataset
         self.n = X_train.shape[1] - 1 # nb of variables to handle (X1, X2, ...)
-        self.theta_norm = np.zeros((self.n + 1, 1)) # matrix of normalized parameters
+        self.theta = np.zeros((self.n + 1, 1)) # matrix of parameters
         self.X_train = X_train
         self.Y_train = Y_train
-        self.X_train_norm = np.hstack((self.X_train[:, 0:1], self.normalize(X_train[:, 1:])))
-        self.Y_train_norm = self.normalize(Y_train)
         self.gradient_descent()
 
     def display_stat(self):
         print(f"\n{CYAN}Iterations:         {GREEN}{self.iteration}")
         print(f"{CYAN}Learning rate:      {GREEN}{self.learning_rate}")
         print(f"\n{YELLOW}|-------------------------------------------|{END}\n")
-        print(f"{CYAN}theta = {GREEN}{self.theta_norm.flatten()}")      
-        for i in range(1, self.X_train.shape[1]):
-            min_x_feature = np.min(self.X_train[:, i])
-            max_x_feature = np.max(self.X_train[:, i])
-            print(f"{CYAN}min_x{i} = {GREEN}{min_x_feature}{END}")
-            print(f"{CYAN}max_x{i} = {GREEN}{max_x_feature}{END}")
-        print(f"{CYAN}min_y = {GREEN}{np.min(self.Y_train)}")
-        print(f"{CYAN}max_y = {GREEN}{np.max(self.Y_train)}")
+        print(f"{CYAN}theta = {GREEN}{self.theta.flatten()}{END}")      
 
 
     @staticmethod
@@ -55,7 +46,7 @@ class LinearRegression:
         """
         Return a matrix(n+1, 1) representing the gradient
         """
-        Y_prediction = self.predict(self.theta_norm, X_train)
+        Y_prediction = self.predict(self.theta, X_train)
         gradient = (1 / self.m) * np.dot(X_train.T, (Y_prediction - Y_train))
         return gradient
 
@@ -64,14 +55,14 @@ class LinearRegression:
         Gradient descent algorithm in matrix form, following the formula THETA = THETA - alpha * (dJ/dTHETA)
         """
         for i in range(self.iteration):
-            gradient = self.gradient(self.X_train_norm, self.Y_train_norm)
-            self.theta_norm -= self.learning_rate * gradient
-            cost = self.cost_function(self.theta_norm, self.X_train_norm, self.Y_train_norm)
+            gradient = self.gradient(self.X_train, self.Y_train)
+            self.theta -= self.learning_rate * gradient
+            cost = self.cost_function(self.theta, self.X_train, self.Y_train)
             self.cost_history.append(cost)
             if i != 0 and i % (self.iteration / 10) == 0:
                 print(f"{CYAN}Iteration:  {YELLOW}{i}{CYAN} | cost: {YELLOW}{cost:.4f}",
-                      f"{CYAN}| theta: {YELLOW}{self.theta_norm.flatten()}",
+                      f"{CYAN}| theta: {YELLOW}{self.theta.flatten()}",
                       f"{CYAN}| gradient: {YELLOW}{gradient.flatten()}{END}")
-
-    def normalize(self, array: np.ndarray)-> np.ndarray:
+    @staticmethod
+    def normalize(array: np.ndarray)-> np.ndarray:
         return (array - np.min(array)) / (np.max(array) - np.min(array))
